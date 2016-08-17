@@ -1,6 +1,9 @@
 package flapdoodle.embed.process.issue45;
 
-import de.flapdoodle.embed.process.config.*;
+import de.flapdoodle.embed.process.config.ExecutableProcessConfig;
+import de.flapdoodle.embed.process.config.IExecutableProcessConfig;
+import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.config.store.DownloadConfigBuilder;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
@@ -13,10 +16,12 @@ import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.UUIDDir;
 import de.flapdoodle.embed.process.io.progress.ConsoleOneLineProgressListener;
 import de.flapdoodle.embed.process.runtime.ICommandLinePostProcessor;
+import de.flapdoodle.embed.process.runtime.ProcessControl;
 import de.flapdoodle.embed.process.runtime.Processes;
 import de.flapdoodle.embed.process.store.ArtifactStoreBuilder;
 import de.flapdoodle.embed.process.store.Downloader;
 import de.flapdoodle.embed.process.store.IArtifactStore;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -71,9 +76,14 @@ public class ProcessesTest {
         final MockExecutable executable = new MockExecutable(distribution, processConfig, runtimeConfig, files);
         final MockProcess process = executable.start();
 
+        final ProcessControl processControl = (ProcessControl) FieldUtils.readDeclaredField(process, "process", true);
+        final Process underlyingProcess = (Process) FieldUtils.readDeclaredField(processControl, "process", true);
+
         final Method windowsProcessId = Processes.class.getDeclaredMethod("windowsProcessId", Process.class);
         windowsProcessId.setAccessible(true);
-        assertNotNull("Process id. was null.", windowsProcessId.invoke(null, process));
+
+        final Long processId = (Long) windowsProcessId.invoke(null, underlyingProcess);
+        assertNotNull("Process id. was null.", processId);
     }
 
 }
