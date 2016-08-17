@@ -22,6 +22,8 @@ import org.junit.Test;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author [[mailto:michael@ahlers.consulting Michael Ahlers]]
  */
@@ -71,7 +73,7 @@ public class ProcessesTest {
 
         final Method windowsProcessId = Processes.class.getDeclaredMethod("windowsProcessId", Process.class);
         windowsProcessId.setAccessible(true);
-        windowsProcessId.invoke(null, process);
+        assertNotNull(windowsProcessId.invoke(null, process));
     }
 
 }
