@@ -73,7 +73,7 @@ public class ProcessesTest {
 
         final Method windowsProcessId = Processes.class.getDeclaredMethod("windowsProcessId", Process.class);
         windowsProcessId.setAccessible(true);
-        assertNotNull(windowsProcessId.invoke(null, process));
+        assertNotNull("Process id. was null.", windowsProcessId.invoke(null, process));
     }
 
 }
