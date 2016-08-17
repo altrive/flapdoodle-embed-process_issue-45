@@ -15,6 +15,7 @@ import de.flapdoodle.embed.process.extract.ImmutableExtractedFileSet;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.UUIDDir;
 import de.flapdoodle.embed.process.io.progress.ConsoleOneLineProgressListener;
+import de.flapdoodle.embed.process.runtime.AbstractProcess;
 import de.flapdoodle.embed.process.runtime.ICommandLinePostProcessor;
 import de.flapdoodle.embed.process.runtime.ProcessControl;
 import de.flapdoodle.embed.process.runtime.Processes;
@@ -22,6 +23,7 @@ import de.flapdoodle.embed.process.store.ArtifactStoreBuilder;
 import de.flapdoodle.embed.process.store.Downloader;
 import de.flapdoodle.embed.process.store.IArtifactStore;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -76,8 +78,8 @@ public class ProcessesTest {
         final MockExecutable executable = new MockExecutable(distribution, processConfig, runtimeConfig, files);
         final MockProcess process = executable.start();
 
-        final ProcessControl processControl = (ProcessControl) FieldUtils.readDeclaredField(process, "process", true);
-        final Process underlyingProcess = (Process) FieldUtils.readDeclaredField(processControl, "process", true);
+        final ProcessControl processControl = (ProcessControl) FieldUtils.getDeclaredField(AbstractProcess.class, "process", true).get(process);
+        final Process underlyingProcess = (Process) FieldUtils.getDeclaredField(ProcessControl.class, "process", true).get(processControl);
 
         final Method windowsProcessId = Processes.class.getDeclaredMethod("windowsProcessId", Process.class);
         windowsProcessId.setAccessible(true);
