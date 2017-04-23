@@ -8,8 +8,6 @@ platform:
   - x64
 
 environment:
-  global:
-    MAVEN_OPTS: -Djna.nosys=true
   matrix:
     - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
     - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
@@ -27,4 +25,4 @@ install:
   - cmd: SET PATH=C:\maven\apache-maven-3.3.9\bin;%JAVA_HOME%\bin;%PATH%
 
 test_script:
-  - mvn -q -B clean verify
+  - mvn -q -B clean verify -Djna.nosys=true
